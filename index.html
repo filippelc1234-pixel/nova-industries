@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NOVA INDUSTRIES — Original superhero tech, engineered in-house</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+  :root{
+    --bg:#0a0b0d; --surface:#101216; --surface2:#171b21; --line:#232a35;
+    --red:#e0392b; --red2:#ff5a3c; --orange:#ff7a3c;
+    --text:#9aa4b2; --dim:#5a6473; --bright:#f4f6f9;
+    --space:clamp(96px,12vw,160px);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+  ::selection{background:var(--red);color:#fff;}
+  ::-webkit-scrollbar{width:6px;}::-webkit-scrollbar-track{background:var(--bg);}::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px;}::-webkit-scrollbar-thumb:hover{background:var(--red);}
+
+  .scroll-bar{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--red),var(--orange));z-index:300;width:0;transition:width .1s;}
+  .wrap{max-width:1140px;margin:0 auto;padding:0 28px;}
+  .rv{opacity:0;transform:translateY(34px);transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1);}
+  .rv.on{opacity:1;transform:none;}
+  [data-d="1"]{transition-delay:.08s}[data-d="2"]{transition-delay:.16s}[data-d="3"]{transition-delay:.24s}[data-d="4"]{transition-delay:.32s}
+
+  .eyebrow{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--red2);text-transform:uppercase;}
+  .grad{background:linear-gradient(120deg,var(--orange),var(--red));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+  .btn{display:inline-flex;align-items:center;gap:8px;text-decoration:none;font-size:14px;font-weight:600;padding:13px 24px;border-radius:10px;transition:all .2s cubic-bezier(.16,1,.3,1);border:none;cursor:pointer;font-family:'Inter';position:relative;}
+  .btn.p{background:var(--red);color:#fff;box-shadow:0 4px 16px rgba(224,57,43,.25);}
+  .btn.p:hover{background:var(--red2);transform:translateY(-2px);box-shadow:0 10px 28px rgba(224,57,43,.4);}
+  .btn.s{background:transparent;color:var(--bright);border:1px solid var(--line);}
+  .btn.s:hover{border-color:var(--red2);color:var(--red2);transform:translateY(-2px);}
+  .btn.ghost{background:none;color:var(--text);padding:13px 6px;}
+  .btn.ghost:hover{color:var(--red2);}
+
+  /* nav */
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:20px 28px;transition:all .3s;}
+  nav.small{padding:13px 28px;background:rgba(10,11,13,.82);backdrop-filter:blur(18px);border-bottom:1px solid var(--line);}
+  .brand{display:flex;align-items:center;gap:11px;}
+  .brand svg{width:27px;height:30px;filter:drop-shadow(0 0 6px rgba(224,57,43,.4));}
+  .brand span{font-family:'JetBrains Mono',monospace;font-weight:600;font-size:13px;letter-spacing:3px;color:var(--bright);}
+  .nav-links{display:flex;gap:30px;list-style:none;align-items:center;}
+  .nav-links a{color:var(--text);text-decoration:none;font-size:13px;font-weight:500;transition:color .2s;position:relative;}
+  .nav-links a:not(.btn)::after{content:'';position:absolute;left:0;right:0;bottom:-6px;height:1.5px;background:var(--red2);transform:scaleX(0);transform-origin:left;transition:transform .25s;}
+  .nav-links a:not(.btn):hover{color:var(--bright);}
+  .nav-links a:not(.btn):hover::after{transform:scaleX(1);}
+  .nav-links .btn{font-size:13px;padding:9px 18px;}
+
+  /* hero */
+  .hero{padding:172px 0 92px;text-align:center;position:relative;overflow:hidden;}
+  .hero-glow{position:absolute;top:-12%;left:50%;transform:translateX(-50%);width:720px;height:520px;background:radial-gradient(ellipse,rgba(224,57,43,.16),transparent 65%);pointer-events:none;animation:glowpulse 7s ease-in-out infinite;}
+  @keyframes glowpulse{0%,100%{opacity:.75}50%{opacity:1}}
+  .hero-logo-wrap{display:flex;justify-content:center;margin-bottom:28px;}
+  .hero-logo{width:96px;height:106px;filter:drop-shadow(0 0 26px rgba(255,90,60,.5));animation:float 6s ease-in-out infinite;}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+  .hero .eyebrow{margin-bottom:22px;display:inline-block;}
+  .hero h1{font-size:clamp(40px,6.6vw,76px);font-weight:800;letter-spacing:-2.5px;line-height:1.02;color:var(--bright);max-width:900px;margin:0 auto;}
+  .hero .lead{max-width:600px;margin:26px auto 0;font-size:1.18em;color:var(--text);}
+  .hero-cta{display:flex;gap:14px;justify-content:center;margin-top:36px;flex-wrap:wrap;}
+  .hero-note{margin-top:24px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:var(--dim);}
+
+  /* trust */
+  .trust{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.012),transparent);}
+  .trust-inner{display:grid;grid-template-columns:repeat(4,1fr);}
+  .trust-cell{padding:36px 18px;text-align:center;border-right:1px solid var(--line);transition:background .3s;}
+  .trust-cell:hover{background:rgba(255,255,255,.015);}
+  .trust-cell:last-child{border-right:none;}
+  .trust-cell .v{font-family:'JetBrains Mono',monospace;font-size:2em;font-weight:600;color:var(--bright);}
+  .trust-cell .v.r{color:var(--red2);}
+  .trust-cell .l{font-size:12px;color:var(--dim);margin-top:5px;}
+
+  section{padding:var(--space) 0;}
+  .sec-head{max-width:640px;margin:0 auto 60px;text-align:center;}
+  .sec-head .eyebrow{display:inline-block;margin-bottom:16px;}
+  .sec-head h2{font-size:clamp(31px,4.6vw,48px);font-weight:800;color:var(--bright);letter-spacing:-1.4px;line-height:1.08;}
+  .sec-head p{margin-top:16px;font-size:1.08em;color:var(--text);}
+
+  /* value props */
+  .vals{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+  .val{padding:36px 32px;border:1px solid var(--line);border-radius:18px;background:var(--surface);transition:all .35s cubic-bezier(.16,1,.3,1);position:relative;overflow:hidden;}
+  .val::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--red2),transparent);opacity:0;transition:opacity .35s;}
+  .val:hover{border-color:#2e3645;transform:translateY(-5px);box-shadow:0 24px 50px rgba(0,0,0,.35);}
+  .val:hover::before{opacity:1;}
+  .val .vi{width:48px;height:48px;border-radius:12px;background:rgba(224,57,43,.1);border:1px solid rgba(224,57,43,.22);display:flex;align-items:center;justify-content:center;font-size:21px;margin-bottom:20px;}
+  .val h3{font-size:1.22em;font-weight:700;color:var(--bright);margin-bottom:9px;}
+  .val p{font-size:.95em;color:var(--text);}
+
+  /* featured product */
+  .product{background:var(--surface);border-top:1px solid var(--line);border-bottom:1px solid var(--line);position:relative;overflow:hidden;}
+  .prod-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;}
+  .prod-info .badge{display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;color:#23b765;background:rgba(35,183,101,.1);border:1px solid rgba(35,183,101,.22);padding:5px 12px;border-radius:100px;margin-bottom:18px;}
+  .prod-info .badge .d{width:6px;height:6px;border-radius:50%;background:#23b765;animation:bp 2s infinite;}
+  @keyframes bp{50%{opacity:.35}}
+  .prod-info h2{font-size:clamp(32px,4.2vw,50px);font-weight:800;color:var(--bright);letter-spacing:-1.5px;line-height:.98;}
+  .prod-info .tagline{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--red2);margin:9px 0 18px;letter-spacing:.5px;}
+  .prod-info p{color:var(--text);margin-bottom:22px;}
+  .prod-specs{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:26px;}
+  .chip{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text);background:var(--surface2);border:1px solid var(--line);border-radius:8px;padding:7px 12px;}
+  .chip b{color:var(--red2);}
+  .prod-btns{display:flex;flex-wrap:wrap;gap:10px;}
+  .prod-visual{display:flex;align-items:center;justify-content:center;position:relative;min-height:340px;}
+  .ring{position:absolute;border-radius:50%;border:1px dashed rgba(224,57,43,.14);top:50%;left:50%;transform:translate(-50%,-50%);}
+  .ring.r1{width:250px;height:250px;animation:sp 24s linear infinite;}
+  .ring.r2{width:316px;height:316px;border-color:rgba(255,255,255,.05);animation:sp 34s linear infinite reverse;}
+  @keyframes sp{to{transform:translate(-50%,-50%) rotate(360deg)}}
+  .prod-spider{width:188px;height:207px;position:relative;z-index:2;filter:drop-shadow(0 0 26px rgba(255,90,60,.4));}
+
+  /* showcase (replaces demo) */
+  .showcase{position:relative;overflow:hidden;}
+  .showcase-stage{position:relative;display:flex;align-items:center;justify-content:center;height:340px;margin-bottom:18px;}
+  .pulse-ring{position:absolute;border:1.5px solid var(--red);border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%);animation:pulseOut 3.2s ease-out infinite;}
+  @keyframes pulseOut{0%{width:130px;height:130px;opacity:.6}100%{width:460px;height:460px;opacity:0}}
+  .sweep{position:absolute;left:50%;top:50%;width:230px;height:230px;transform:translate(-50%,-50%);border-radius:50%;background:conic-gradient(from 0deg,rgba(255,90,60,.18),transparent 22%);animation:sweep 4s linear infinite;}
+  @keyframes sweep{to{transform:translate(-50%,-50%) rotate(360deg)}}
+  .show-spider{width:140px;height:154px;position:relative;z-index:3;filter:drop-shadow(0 0 30px rgba(255,90,60,.55));animation:breathe 4s ease-in-out infinite;}
+  @keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+  .show-caps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;}
+  .cap{padding:26px 22px;border:1px solid var(--line);border-radius:16px;background:var(--surface);text-align:center;transition:all .35s;}
+  .cap:hover{border-color:rgba(224,57,43,.35);transform:translateY(-4px);}
+  .cap .ci{font-size:24px;margin-bottom:12px;}
+  .cap h4{font-size:1.02em;font-weight:700;color:var(--bright);margin-bottom:6px;}
+  .cap p{font-size:.84em;color:var(--dim);line-height:1.55;}
+
+  /* lineup */
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:30px;transition:all .35s cubic-bezier(.16,1,.3,1);cursor:pointer;position:relative;overflow:hidden;}
+  .card::before{content:'';position:absolute;inset:0;background:radial-gradient(280px circle at var(--mx,50%) var(--my,50%),rgba(224,57,43,.06),transparent 45%);opacity:0;transition:opacity .35s;}
+  .card:hover{border-color:rgba(224,57,43,.3);transform:translateY(-5px);box-shadow:0 24px 50px rgba(0,0,0,.4);}
+  .card:hover::before{opacity:1;}
+  .card .ic{font-size:28px;margin-bottom:14px;}
+  .card .st{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;color:var(--dim);border:1px solid var(--line);border-radius:100px;padding:3px 10px;display:inline-block;margin-bottom:14px;}
+  .card h4{font-size:1.18em;font-weight:700;color:var(--bright);margin-bottom:7px;}
+  .card p{font-size:.9em;color:var(--dim);margin-bottom:15px;}
+  .card .more{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--red2);font-weight:600;}
+
+  /* how */
+  .how{background:var(--surface);border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;}
+  .step{text-align:center;position:relative;}
+  .step .n{font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--red2);border:1px solid rgba(224,57,43,.3);width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-weight:600;transition:all .3s;}
+  .step:hover .n{background:var(--red);color:#fff;border-color:var(--red);transform:scale(1.08);}
+  .step h4{font-size:1.08em;font-weight:700;color:var(--bright);margin-bottom:7px;}
+  .step p{font-size:.9em;color:var(--dim);}
+
+  /* mission */
+  .vision-box{max-width:780px;margin:0 auto;text-align:center;}
+  .vision-box h2{font-size:clamp(29px,3.8vw,42px);font-weight:800;color:var(--bright);letter-spacing:-1.4px;line-height:1.18;}
+  .vision-box p{margin-top:22px;font-size:1.14em;color:var(--text);}
+
+  /* cta */
+  .cta-box{max-width:740px;margin:0 auto;text-align:center;background:linear-gradient(150deg,var(--surface2),var(--bg));border:1px solid var(--line);border-radius:24px;padding:58px 40px;position:relative;overflow:hidden;}
+  .cta-box::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--red),transparent);}
+  .cta-box::after{content:'';position:absolute;width:300px;height:300px;background:radial-gradient(circle,rgba(224,57,43,.1),transparent 70%);top:-120px;left:50%;transform:translateX(-50%);pointer-events:none;}
+  .cta-box h2{font-size:clamp(29px,4.2vw,44px);font-weight:800;color:var(--bright);letter-spacing:-1.4px;margin-bottom:14px;position:relative;}
+  .cta-box p{color:var(--text);margin-bottom:30px;max-width:480px;margin-left:auto;margin-right:auto;position:relative;}
+  .cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative;}
+
+  footer{border-top:1px solid var(--line);padding:52px 0 46px;}
+  .foot-grid{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px;}
+  .foot-brand{display:flex;align-items:center;gap:12px;}
+  .foot-brand svg{width:26px;height:29px;filter:drop-shadow(0 0 6px rgba(224,57,43,.4));}
+  .foot-brand .nm{font-family:'JetBrains Mono',monospace;font-weight:600;letter-spacing:3px;color:var(--bright);font-size:13px;}
+  .foot-brand .tl{font-size:12px;color:var(--dim);}
+  .foot-meta{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim);letter-spacing:1px;}
+
+  .top{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:11px;background:var(--surface2);border:1px solid var(--line);color:var(--text);display:flex;align-items:center;justify-content:center;font-size:17px;z-index:150;opacity:0;pointer-events:none;transform:translateY(12px);transition:all .3s;cursor:pointer;}
+  .top.show{opacity:1;pointer-events:auto;transform:none;}
+  .top:hover{border-color:var(--red2);color:var(--red2);}
+
+  /* modal */
+  .modal{position:fixed;inset:0;z-index:500;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;pointer-events:none;transition:opacity .25s;}
+  .modal.open{opacity:1;pointer-events:auto;}
+  .modal-bg{position:absolute;inset:0;background:rgba(5,6,8,.8);backdrop-filter:blur(6px);}
+  .modal-box{position:relative;z-index:2;background:var(--surface);border:1px solid var(--line);border-radius:20px;max-width:460px;width:100%;padding:36px;transform:scale(.94);transition:transform .3s cubic-bezier(.16,1,.3,1);}
+  .modal.open .modal-box{transform:scale(1);}
+  .modal-box .mic{font-size:40px;margin-bottom:12px;}
+  .modal-box .mst{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;color:var(--red2);border:1px solid rgba(224,57,43,.3);border-radius:100px;padding:3px 11px;display:inline-block;margin-bottom:14px;}
+  .modal-box h3{font-size:1.65em;font-weight:800;color:var(--bright);margin-bottom:11px;letter-spacing:-.5px;}
+  .modal-box p{color:var(--text);margin-bottom:18px;font-size:.96em;}
+  .modal-box .mrow{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line);font-family:'JetBrains Mono',monospace;font-size:12px;}
+  .modal-box .mrow span:first-child{color:var(--dim);}.modal-box .mrow span:last-child{color:var(--bright);}
+  .modal-close{position:absolute;top:15px;right:15px;width:30px;height:30px;border:1px solid var(--line);background:none;border-radius:8px;color:var(--dim);cursor:pointer;transition:all .2s;}
+  .modal-close:hover{border-color:var(--red2);color:var(--red2);}
+
+  @media(max-width:860px){
+    .nav-links{display:none;}.trust-inner{grid-template-columns:repeat(2,1fr);}.trust-cell:nth-child(2){border-right:none;}.trust-cell:nth-child(1),.trust-cell:nth-child(2){border-bottom:1px solid var(--line);}
+    .vals,.grid,.steps,.show-caps{grid-template-columns:1fr;}.prod-grid{grid-template-columns:1fr;gap:40px;}.show-caps{grid-template-columns:repeat(2,1fr);}
+  }
+</style>
+</head>
+<body>
+<div class="scroll-bar" id="sb"></div>
+
+<svg width="0" height="0" style="position:absolute"><defs>
+  <linearGradient id="fg" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#ff8a4c"/><stop offset="1" stop-color="#e0392b"/>
+  </linearGradient>
+  <!-- clean white logo (nav / footer) -->
+  <g id="sp">
+    <g fill="none" stroke="#f4f6f9" stroke-width="9" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="122,96 150,62 166,30"/><polyline points="130,114 170,100 194,90"/>
+      <polyline points="130,134 170,152 192,176"/><polyline points="118,150 140,186 153,214"/>
+      <polyline points="78,96 50,62 34,30"/><polyline points="70,114 30,100 6,90"/>
+      <polyline points="70,134 30,152 8,176"/><polyline points="82,150 60,186 47,214"/></g>
+    <circle cx="100" cy="40" r="17" fill="#f4f6f9"/><polygon points="86,52 114,52 110,86 90,86" fill="#f4f6f9"/>
+    <polygon points="100,74 134,96 134,140 100,162 66,140 66,96" fill="#f4f6f9"/>
+    <circle cx="100" cy="118" r="13" fill="#0a0b0d"/><circle cx="100" cy="118" r="8" fill="#e0392b"/>
+  </g>
+  <!-- fire gradient logo (hero / showcase) -->
+  <g id="spFire">
+    <g fill="none" stroke="url(#fg)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="122,96 150,62 166,30"/><polyline points="130,114 170,100 194,90"/>
+      <polyline points="130,134 170,152 192,176"/><polyline points="118,150 140,186 153,214"/>
+      <polyline points="78,96 50,62 34,30"/><polyline points="70,114 30,100 6,90"/>
+      <polyline points="70,134 30,152 8,176"/><polyline points="82,150 60,186 47,214"/></g>
+    <circle cx="100" cy="40" r="17" fill="url(#fg)"/><polygon points="86,52 114,52 110,86 90,86" fill="url(#fg)"/>
+    <polygon points="100,74 134,96 134,140 100,162 66,140 66,96" fill="url(#fg)"/>
+    <circle cx="100" cy="118" r="13" fill="#0a0b0d"/><circle cx="100" cy="118" r="7" fill="#fff5e6"/>
+  </g>
+</defs></svg>
+
+<nav id="nav">
+  <div class="brand"><svg viewBox="0 0 200 220"><use href="#sp"/></svg><span>NOVA INDUSTRIES</span></div>
+  <ul class="nav-links">
+    <li><a href="#product">Product</a></li>
+    <li><a href="#showcase">Capabilities</a></li>
+    <li><a href="#lineup">Lineup</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#product" class="btn p">Explore →</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-glow"></div>
+  <div class="wrap">
+    <div class="hero-logo-wrap rv"><svg class="hero-logo" viewBox="0 0 200 220"><use href="#spFire"/></svg></div>
+    <span class="eyebrow rv" data-d="1">NOVA INDUSTRIES</span>
+    <h1 class="rv" data-d="2">Superhero tech,<br><span class="grad">engineered in-house.</span></h1>
+    <p class="lead rv" data-d="3">Original wearable gadgets that actually work — designed and built from the ground up. You've never seen anything like them, because there's nothing like them.</p>
+    <div class="hero-cta rv" data-d="4">
+      <a href="#product" class="btn p">See the Tech →</a>
+      <a href="#showcase" class="btn s">What it does</a>
+    </div>
+    <div class="hero-note rv" data-d="4">FLAGSHIP · SPIDER SENSE · ENGINEERED IN-HOUSE</div>
+  </div>
+</header>
+
+<!-- TRUST -->
+<div class="trust">
+  <div class="wrap"><div class="trust-inner">
+    <div class="trust-cell"><div class="v r" data-n="1">0</div><div class="l">Flagship product</div></div>
+    <div class="trust-cell"><div class="v" data-n="360">0</div><div class="l">Degrees of awareness</div></div>
+    <div class="trust-cell"><div class="v">Real-time</div><div class="l">Threat response</div></div>
+    <div class="trust-cell"><div class="v">1-of-1</div><div class="l">Original build</div></div>
+  </div></div>
+</div>
+
+<!-- VALUE PROPS -->
+<section>
+  <div class="wrap">
+    <div class="sec-head rv"><span class="eyebrow">Why NOVA</span><h2>Tech that actually works</h2><p>Most "superhero gadgets" are concepts, renders, or props. Ours are real, working machines — engineered in-house and built to perform.</p></div>
+    <div class="vals">
+      <div class="val rv" data-d="1"><div class="vi">⚙️</div><h3>Real, not concept</h3><p>Every NOVA device is a functioning machine — not a movie prop, not a render. It powers on and it works.</p></div>
+      <div class="val rv" data-d="2"><div class="vi">🔒</div><h3>Engineered in-house</h3><p>Designed, built, and tuned from scratch in the lab. The product goes public — the blueprint stays with us.</p></div>
+      <div class="val rv" data-d="3"><div class="vi">💎</div><h3>One of a kind</h3><p>You won't find it on a shelf or in a kit. Every NOVA build is an original, made by hand, one at a time.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED PRODUCT -->
+<section class="product" id="product">
+  <div class="wrap">
+    <div class="prod-grid">
+      <div class="prod-info rv">
+        <div class="badge"><span class="d"></span>FLAGSHIP · IN BUILD</div>
+        <h2>Spider Sense</h2>
+        <div class="tagline">// PROJECT ARACHNID · A MASK THAT FEELS DANGER</div>
+        <p>A wearable that lets you <b style="color:var(--bright)">feel danger coming</b> from any direction. It senses what's moving toward you and alerts you instantly — on the exact side the threat is coming from. It ignores walls and reacts only to what matters. Real spider sense, in a mask.</p>
+        <div class="prod-specs"><div class="chip"><b>360°</b> coverage</div><div class="chip"><b>Real-time</b> alerts</div><div class="chip"><b>Directional</b> feedback</div><div class="chip"><b>Ignores</b> walls</div></div>
+        <div class="prod-btns">
+          <a class="btn p" href="#showcase">See what it does →</a>
+          <a class="btn s" href="#lineup">Explore the lineup</a>
+        </div>
+      </div>
+      <div class="prod-visual rv" data-d="1">
+        <div class="ring r1"></div><div class="ring r2"></div>
+        <svg class="prod-spider" viewBox="0 0 200 220"><use href="#spFire"/></svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SHOWCASE (cinematic, replaces demo) -->
+<section class="showcase" id="showcase">
+  <div class="wrap">
+    <div class="sec-head rv"><span class="eyebrow">The experience</span><h2>One sense. <span class="grad">Every direction.</span></h2><p>It doesn't just see — it feels. The instant something moves toward you, you know exactly where it is.</p></div>
+    <div class="showcase-stage rv">
+      <div class="sweep"></div>
+      <div class="pulse-ring" style="animation-delay:0s"></div>
+      <div class="pulse-ring" style="animation-delay:1.06s"></div>
+      <div class="pulse-ring" style="animation-delay:2.13s"></div>
+      <svg class="show-spider" viewBox="0 0 200 220"><use href="#spFire"/></svg>
+    </div>
+    <div class="show-caps">
+      <div class="cap rv" data-d="1"><div class="ci">🧭</div><h4>360° Coverage</h4><p>Nothing approaches unnoticed — from any angle, front to back.</p></div>
+      <div class="cap rv" data-d="2"><div class="ci">⚡</div><h4>Real-Time</h4><p>The alert hits the moment a threat starts moving toward you.</p></div>
+      <div class="cap rv" data-d="3"><div class="ci">🎯</div><h4>Directional</h4><p>You feel exactly which way the danger is coming from.</p></div>
+      <div class="cap rv" data-d="4"><div class="ci">🧠</div><h4>Smart</h4><p>Ignores walls and stillness. Only real, moving threats trigger it.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- LINEUP -->
+<section id="lineup">
+  <div class="wrap">
+    <div class="sec-head rv"><span class="eyebrow">The lineup</span><h2>More on the way</h2><p>The flagship is just the start. Here's what NOVA is engineering next. Tap any product for the reveal.</p></div>
+    <div class="grid">
+      <div class="card rv" data-d="1" data-ic="👁️" data-title="Glowing Eyes" data-status="PLANNED" data-type="Mask add-on" data-reveal="Soon" data-desc="Mask eyes that light up and pulse the instant the spider sense fires — on the side the danger's coming from. The first official add-on for Project Arachnid."><div class="ic">👁️</div><div class="st">PLANNED</div><h4>Glowing Eyes</h4><p>Eyes that light up and react the moment the spider sense fires.</p><div class="more">Details →</div></div>
+      <div class="card rv" data-d="2" data-ic="🕸️" data-title="Web Shooters" data-status="PLANNED" data-type="Wrist gadget" data-reveal="Summer" data-desc="Wrist-mounted launchers that fire a web-line on command. The classic gadget, reimagined and engineered by NOVA."><div class="ic">🕸️</div><div class="st">PLANNED</div><h4>Web Shooters</h4><p>Wrist-mounted launchers that fire a web-line on command.</p><div class="more">Details →</div></div>
+      <div class="card rv" data-d="3" data-ic="🔦" data-title="Spider Signal" data-status="CONCEPT" data-type="Projector" data-reveal="TBA" data-desc="Projects the NOVA mark onto any wall or the clouds — your own signal in the sky. A striking way to announce the lab is open."><div class="ic">🔦</div><div class="st">CONCEPT</div><h4>Spider Signal</h4><p>Projects the NOVA mark onto any wall. Your own signal in the sky.</p><div class="more">Details →</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW -->
+<section class="how" id="how">
+  <div class="wrap">
+    <div class="sec-head rv"><span class="eyebrow">The standard</span><h2>How NOVA ships</h2><p>Every product is held to the same standard — no shortcuts, no concepts pretending to be real.</p></div>
+    <div class="steps">
+      <div class="step rv" data-d="1"><div class="n">01</div><h4>Imagine</h4><p>It starts as an idea that won't leave us alone.</p></div>
+      <div class="step rv" data-d="2"><div class="n">02</div><h4>Engineer</h4><p>Designed and refined in-house until it works flawlessly.</p></div>
+      <div class="step rv" data-d="3"><div class="n">03</div><h4>Build</h4><p>Assembled by hand into a real, wearable device.</p></div>
+      <div class="step rv" data-d="4"><div class="n">04</div><h4>Reveal</h4><p>The product goes public. The blueprint stays in the lab.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- MISSION -->
+<section id="about">
+  <div class="wrap">
+    <div class="vision-box rv">
+      <span class="eyebrow">The mission</span>
+      <h2 style="margin-top:16px;">The coolest tech shouldn't need a <span class="grad">billion-dollar lab.</span></h2>
+      <p>NOVA INDUSTRIES is a one-person workshop with one belief: a good idea and a steady hand can make something that feels like magic. No team. No budget. Just real, original devices — engineered in-house, and kept that way.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="start">
+  <div class="wrap">
+    <div class="cta-box rv">
+      <h2>More is coming.</h2>
+      <p>Spider Sense is only the first. Keep an eye on NOVA INDUSTRIES for what drops next — the lineup is just getting started.</p>
+      <div class="cta-btns">
+        <a class="btn p" href="#lineup">See the lineup →</a>
+        <a class="btn s" href="#showcase">What it does</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand"><svg viewBox="0 0 200 220"><use href="#sp"/></svg><div><div class="nm">NOVA INDUSTRIES</div><div class="tl">Original superhero tech, engineered in-house.</div></div></div>
+      <div class="foot-meta">EST. 2026 · BUILT BY FILIP · 🕷</div>
+    </div>
+  </div>
+</footer>
+
+<button class="top" id="topBtn">↑</button>
+
+<div class="modal" id="modal">
+  <div class="modal-bg" data-close></div>
+  <div class="modal-box">
+    <button class="modal-close" data-close>✕</button>
+    <div class="mic" id="mIc">🕸️</div><div class="mst" id="mSt">PLANNED</div>
+    <h3 id="mTitle">Title</h3><p id="mDesc">Desc</p>
+    <div class="mrow"><span>Type</span><span id="mType">—</span></div>
+    <div class="mrow"><span>Reveal</span><span id="mReveal">—</span></div>
+    <div class="mrow"><span>Status</span><span id="mStatus">—</span></div>
+  </div>
+</div>
+
+<script>
+addEventListener('scroll',()=>{const p=scrollY/(document.body.scrollHeight-innerHeight)*100;document.getElementById('sb').style.width=p+'%';document.getElementById('nav').classList.toggle('small',scrollY>40);document.getElementById('topBtn').classList.toggle('show',scrollY>600);});
+document.getElementById('topBtn').onclick=()=>scrollTo({top:0,behavior:'smooth'});
+const ob=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('on')}),{threshold:.12});
+document.querySelectorAll('.rv').forEach(el=>ob.observe(el));
+const co=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting&&!e.target._d){e.target._d=1;const n=+e.target.dataset.n,s=performance.now();(function t(now){const p=Math.min((now-s)/1300,1);e.target.textContent=Math.round((1-Math.pow(1-p,3))*n);if(p<1)requestAnimationFrame(t);})(s);}}),{threshold:.5});
+document.querySelectorAll('[data-n]').forEach(el=>co.observe(el));
+// card shine + modal
+const modal=document.getElementById('modal');
+document.querySelectorAll('.card').forEach(c=>{
+  c.addEventListener('mousemove',e=>{const r=c.getBoundingClientRect();c.style.setProperty('--mx',(e.clientX-r.left)+'px');c.style.setProperty('--my',(e.clientY-r.top)+'px');});
+  c.addEventListener('click',()=>{const d=c.dataset;mIc.textContent=d.ic;mSt.textContent=d.status;mTitle.textContent=d.title;mDesc.textContent=d.desc;mType.textContent=d.type;mReveal.textContent=d.reveal;mStatus.textContent=d.status;modal.classList.add('open');});
+});
+modal.querySelectorAll('[data-close]').forEach(el=>el.onclick=()=>modal.classList.remove('open'));
+addEventListener('keydown',e=>{if(e.key==='Escape')modal.classList.remove('open');});
+document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();document.querySelector(a.getAttribute('href'))?.scrollIntoView({behavior:'smooth'});}));
+</script>
+</body>
+</html>
